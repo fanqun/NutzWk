@@ -121,6 +121,21 @@
             <version>1.r.57</version>
         </dependency>
         <dependency>
+            <groupId>org.nutz</groupId>
+            <artifactId>nutz-plugins-views</artifactId>
+            <version>1.r.58-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.nutz</groupId>
+                    <artifactId>nutz</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.beust</groupId>
+                    <artifactId>jcommander</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>cn.enilu.tools</groupId>
             <artifactId>nutzwk-code-generator</artifactId>
             <version>1.1</version>
@@ -168,7 +183,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
-            <version>1.0.22</version>
+            <version>1.0.24</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.alibaba</groupId>
@@ -357,10 +372,21 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- api token web server -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.8.1</version>
+        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
-        <outputDirectory>classes</outputDirectory>
+        <outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -408,6 +434,7 @@
                     <compilerArgs>
                         <arg>-parameters</arg>
                     </compilerArgs>
+                    <useIncrementalCompilation>false</useIncrementalCompilation>
                 </configuration>
             </plugin>
             <plugin>
@@ -438,6 +465,41 @@
                     <argLine>-Dfile.encoding=UTF-8</argLine>
                 </configuration>
             </plugin>
+            
+             <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jetty-version}</version>
+                <configuration>
+                    <httpConnector>
+                        <port>8081</port>
+                    </httpConnector>
+                    <stopKey>shutdown</stopKey>
+                    <stopPort>9966</stopPort>
+                    <scanIntervalSeconds>5</scanIntervalSeconds>
+                    <dumpOnStart>true</dumpOnStart>
+                    <webApp>
+                        <contextPath>/</contextPath>
+                        <!--
+                        <resourceBases>
+                          <resourceBase>${project.basedir}/src/main/webapp</resourceBase>
+                          <resourceBase>${project.basedir}/commons</resourceBase>
+                        </resourceBases>
+                        -->
+                    </webApp>
+                    <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
+                        <filename>target/access-yyyy_mm_dd.log</filename>
+                        <filenameDateFormat>yyyy_MM_dd</filenameDateFormat>
+                        <logDateFormat>yyyy-MM-dd HH:mm:ss</logDateFormat>
+                        <logTimeZone>GMT+8:00</logTimeZone>
+                        <append>true</append>
+                        <logServer>true</logServer>
+                        <retainDays>120</retainDays>
+                        <logCookies>true</logCookies>
+                    </requestLog>
+                </configuration>
+            </plugin>
+            
         </plugins>
     </build>
 </project>
